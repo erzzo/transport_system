@@ -1,12 +1,13 @@
 <script setup lang="ts">
   import { reactive, ref } from 'vue';
-  import PageHeader from '../../components/PageHeader.vue';
-  import { OrderType } from '../../../../shared-models/order-type.enum';
+  import PageHeader from '../../../components/PageHeader.vue';
+  import { OrderType } from '../../../../../shared-models/order-type.enum';
+import type { Order } from '../../../../../shared-models/order.interface';
 
-  const order = reactive({
+  const order = reactive<Order>({
     orderNumber: '',
-    customer: '',
-    date: '',
+    customerName: '',
+    date: null,
     waypoints: [{ location: '', type: OrderType.PICKUP }]
   });
 
@@ -27,7 +28,7 @@
 
   const handleSubmit = () => {
     // simple validation example
-    if (!order.orderNumber || !order.customer || !order.date) {
+    if (!order.orderNumber || !order.customerName || !order.date) {
       hasError.value = true;
       return;
     }
@@ -51,7 +52,7 @@
     <b-form-input
       id="customer-name"
       type="text"
-      v-model="order.customer"
+      v-model="order.customerName"
     ></b-form-input>
 
     <label for="date">Date</label>
@@ -85,6 +86,7 @@
         ></b-form-select>
 
         <b-button
+          v-if="index !== 0"
           variant="danger"
           size="sm"
           @click="removeWaypoint(index)"

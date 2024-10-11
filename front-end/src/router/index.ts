@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import OrdersView from '@/pages/orders/OrdersView.vue'
-import CreateOrderView from '../pages/orders/CreateOrderView.vue'
+import OrdersView from '@/pages/orders/overview/OrdersView.vue'
+import CreateOrderView from '@/pages/orders/create/CreateOrderView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
