@@ -1,55 +1,54 @@
 <script setup lang="ts">
+  import { computed, onMounted, reactive, ref } from 'vue';
   import PageHeader from '../../../components/PageHeader.vue';
   import type { Order } from '../../../../../shared-models/order.interface';
-  import { OrderType } from '../../../../../shared-models/order-type.enum';
   import OrdersViewTable from './OrdersViewTable.vue';
-import { computed, reactive } from 'vue';
+
+const orders = ref([]);
+const loading = ref(false);
 
   const filters = reactive({
     customerName: '',
     date: new Date(),
   });
 
-  const orders: Order[] = [
-    {
-      customerName: 'Lajos',
-      orderNumber: 987651635,
-      date: new Date(),
-      waypoints: [
-        { location: 'Microsoft hq', type: OrderType.DELIVERY },
-        { location: 'Microsoft sub', type: OrderType.PICKUP }
-      ]
-    },
-    {
-      customerName: 'Mark',
-      orderNumber: 999855544,
-      date: new Date(),
-      waypoints: [
-        { location: 'facebook hq', type: OrderType.PICKUP }
-      ]
+  const fetchData = async () => {
+    loading.value = true;
+    orders.value = [];
+
+    try {
+      const response = await fetch('http://localhost:3000/orders');
+      orders.value = await response.json();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      loading.value = false;
     }
-  ];
+};
 
   // simplified filter function, this will be handled on BE, there will be many orders + pagination
   const filteredOrders = computed<Order[]>(() => {
     if (!filters.customerName && !filters.date) {
-      return orders;
+      return orders.value;
     }
 
-    return orders.filter((order) => {
+    return orders.value.filter((order: Order) => {
       const filteredDate = filters.date ? new Date(filters.date) : null;
+      const orderDate = new Date(order.date);
+
       // for that I would use a library like momen, datafns
-      const isSameDate = order.date?.getFullYear() === filteredDate?.getFullYear() &&
-        order.date?.getMonth() === filteredDate?.getMonth() &&
-        order.date?.getDay() === filteredDate?.getDay()
+      const isSameDate = orderDate.getFullYear() === filteredDate?.getFullYear() &&
+        orderDate.getMonth() === filteredDate?.getMonth() &&
+        orderDate.getDay() === filteredDate?.getDay()
 
       return (
         order.customerName.toLowerCase().includes(filters.customerName.toLowerCase()) &&
         (filters.date ? isSameDate : true)
       )
-    }
-    )
+    })
   })
+
+  onMounted(fetchData);
 </script>
 
 <template>
@@ -76,8 +75,9 @@ import { computed, reactive } from 'vue';
     :orders="filteredOrders"
   ></OrdersViewTable>
 
-  <div v-if="!orders.length" class="alert alert-info">There are no orders yet</div>
-  <div v-if="orders.length && !filteredOrders.length" class="alert alert-info">No orders match this search criteria</div>
+  <div v-if="!loading && !orders.length" class="alert alert-info">There are no orders yet</div>
+  <div v-if="!loading && orders.length && !filteredOrders.length" class="alert alert-info">No orders match this search criteria</div>
+  <div v-if="loading">Loading orders...</div>
 </template>
 
 <style scoped lang="scss">

@@ -29,7 +29,7 @@
         <tr>
           <th scope="row">{{ order.orderNumber }}</th>
           <td>{{ order.customerName }}</td>
-          <td>{{ order.date?.toLocaleDateString() }}</td>
+          <td>{{ new Date(order.date).toLocaleString() }}</td>
           <td>
             <b-button variant="outline-secondary" size="sm" @click="() => toggleWaypoints(index)">
               {{ index === openedIndex ? 'hide' : 'show'}}
