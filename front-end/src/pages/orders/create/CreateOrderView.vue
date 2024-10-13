@@ -1,8 +1,12 @@
 <script setup lang="ts">
-  import { reactive, ref } from 'vue';
+  import { reactive, ref, watch } from 'vue';
   import PageHeader from '../../../components/PageHeader.vue';
   import { OrderType } from '../../../../../shared-models/order-type.enum';
-import type { Order } from '../../../../../shared-models/order.interface';
+  import type { Order } from '../../../../../shared-models/order.interface';
+  import router from '../../../router';
+
+  const loading = ref(false);
+  let hasError =  ref(false);
 
   const order = reactive<Order>({
     orderNumber: '',
@@ -11,12 +15,19 @@ import type { Order } from '../../../../../shared-models/order.interface';
     waypoints: [{ location: '', type: OrderType.PICKUP }]
   });
 
+  // reset error on order value change
+  watch(
+    () => ({ ...order }),
+    () => {
+      hasError.value = false
+    },
+    { deep: true }
+  );
+
   const waypointOptions = [
     { value: OrderType.PICKUP, text: 'Pickup' },
     { value: OrderType.DELIVERY, text: 'Delivery' },
   ]
-
-  let hasError =  ref(false);
 
   const addWaypoint = () => {
     order.waypoints.push({ location: '', type: OrderType.PICKUP  })
@@ -26,14 +37,35 @@ import type { Order } from '../../../../../shared-models/order.interface';
     order.waypoints.splice(index, 1);
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // simple validation example
     if (!order.orderNumber || !order.customerName || !order.date) {
       hasError.value = true;
       return;
     }
 
-    console.log('Form submitted:', order);
+    loading.value = true;
+
+    // this could be moved to some api service file
+    try {
+      const result = await fetch('http://localhost:3000/orders', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(order)
+      });
+
+      if (result.ok) {
+        router.push('/');
+      }
+      // else, show BE error
+    } catch (err) {
+      console.error(err)
+    } finally {
+      loading.value = false;
+    }
   };
 </script>
 
@@ -105,7 +137,7 @@ import type { Order } from '../../../../../shared-models/order.interface';
       variant="success"
       class="submit-button"
     >
-      Place order
+      {{ loading ? 'Saving...' : 'Save order' }}
     </b-button>
   </form>
 </template>

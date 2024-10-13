@@ -1,9 +1,9 @@
 import { Waypoint } from "./waypoint.interface";
 
 export interface Order {
-  id: number;
+  id?: number;
   customerName: string;
-  date: Date;
+  date: Date | null;
   orderNumber: number | string;
   waypoints: Waypoint[];
 }

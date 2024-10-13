@@ -29,7 +29,7 @@
         <tr>
           <th scope="row">{{ order.orderNumber }}</th>
           <td>{{ order.customerName }}</td>
-          <td>{{ new Date(order.date).toLocaleString() }}</td>
+          <td>{{ new Date(order.date!).toLocaleDateString() }}</td>
           <td>
             <b-button variant="outline-secondary" size="sm" @click="() => toggleWaypoints(index)">
               {{ index === openedIndex ? 'hide' : 'show'}}
@@ -38,7 +38,7 @@
           </td>
         </tr>
 
-      <tr v-if="index === openedIndex">
+      <tr v-if="index === openedIndex" class="waypoints-row">
         <td></td>
         <td class="waypoints" colspan="3">
             <div v-for="(waypoint, waypointIndex) in order.waypoints" :key="waypoint.location" class="waypoint-item">
@@ -58,6 +58,11 @@
 
 <style scoped lang="scss">
   .waypoints {
+    &-row td,
+    &-row tr {
+      background: rgb(251, 251, 251);
+    }
+
     .waypoint {
       &-item {
         display: inline-flex;

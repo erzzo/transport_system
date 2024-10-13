@@ -1,4 +1,4 @@
 export enum OrderType {
-  PICKUP = 'PICKUP',
-  DELIVERY = 'DELIVERY'
+  PICKUP = 'pickup',
+  DELIVERY = 'delivery'
 }

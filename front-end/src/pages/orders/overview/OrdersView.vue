@@ -9,7 +9,7 @@ const loading = ref(false);
 
   const filters = reactive({
     customerName: '',
-    date: new Date(),
+    date: null,
   });
 
   const fetchData = async () => {
@@ -34,7 +34,7 @@ const loading = ref(false);
 
     return orders.value.filter((order: Order) => {
       const filteredDate = filters.date ? new Date(filters.date) : null;
-      const orderDate = new Date(order.date);
+      const orderDate = new Date(order.date!);
 
       // for that I would use a library like momen, datafns
       const isSameDate = orderDate.getFullYear() === filteredDate?.getFullYear() &&
@@ -47,6 +47,11 @@ const loading = ref(false);
       )
     })
   })
+
+  const clearFilters = () => {
+    filters.customerName = ''
+    filters.date = null;
+  }
 
   onMounted(fetchData);
 </script>
@@ -68,6 +73,8 @@ const loading = ref(false);
       type="date"
       v-model="filters.date"
     ></b-form-input>
+
+    <b-button v-if="filters.customerName || filters.date" @click="clearFilters" variant="warning">Clear filters</b-button>
   </div>
 
   <OrdersViewTable

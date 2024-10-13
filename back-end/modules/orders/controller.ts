@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as Repository from './repository';
 import { Order } from '../../../shared-models/order.interface';
 import { DbOrder } from './interfaces/db-order';
+import { Waypoint } from '../../../shared-models/waypoint.interface';
 
 const getOrders = async (req: Request, res: Response) => {
   try {
@@ -13,11 +14,25 @@ const getOrders = async (req: Request, res: Response) => {
 }
 
 const createOrder = async (req: Request, res: Response) => {
-  // some validation
+  // some validation example
+  const order = req.body as Order;
+  if (!order.customerName || !order.date || !order.orderNumber) {
+    res.status(400).send('Missing fields');
+    return;
+  }
 
   try {
-    const order = await Repository.createOrder(req.body);
-    res.status(201).json(order);
+    const newOrder = await Repository.createOrder(order);
+    const createdOrder = newOrder.rows[0];
+    const waypointPromises = req.body.waypoints.map((waypoint: Waypoint) =>
+      Repository.createWaypoint(createdOrder.id, waypoint)
+    )
+    const waypoints = await Promise.all(waypointPromises);
+
+    res.status(201).json({
+      ...createdOrder,
+      waypoints: waypoints.map((result) => result.rows[0])
+    });
   } catch (err) {
     res.status(500).send('Error');
   }
