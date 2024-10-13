@@ -4,8 +4,8 @@
   import type { Order } from '../../../../../shared-models/order.interface';
   import OrdersViewTable from './OrdersViewTable.vue';
 
-const orders = ref([]);
-const loading = ref(false);
+  const orders = ref([]);
+  const loading = ref(false);
 
   const filters = reactive({
     customerName: '',
