@@ -8,7 +8,8 @@ const getOrders = (): Promise<QueryResult<DbOrder>> => {
   return db.query(`
       SELECT *
       FROM orders
-      LEFT JOIN waypoints ON orders.id = waypoints.order_id;
+      LEFT JOIN waypoints ON orders.id = waypoints.order_id
+      ORDER BY date;
     `
   );
 }
@@ -26,7 +27,10 @@ const createOrder = (order: Order): Promise<QueryResult<DbOrder>> => {
 
 const createWaypoint = (orderId: number, waypoint: Waypoint): Promise<QueryResult<Waypoint>> => {
   return db.query(
-    `INSERT INTO waypoints (order_id, location, type) VALUES ($1, $2, $3) RETURNING *;`,
+    `
+    INSERT INTO waypoints (order_id, location, type)
+    VALUES ($1, $2, $3) RETURNING *;
+    `,
     [orderId, waypoint.location, waypoint.type]
   );
 }

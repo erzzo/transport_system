@@ -14,7 +14,8 @@ const getOrders = async (req: Request, res: Response) => {
 }
 
 const createOrder = async (req: Request, res: Response) => {
-  // some validation example
+  // some basic validation example
+  // this would be done in some layer
   const order = req.body as Order;
   if (!order.customerName || !order.date || !order.orderNumber) {
     res.status(400).send('Missing fields');
@@ -24,6 +25,7 @@ const createOrder = async (req: Request, res: Response) => {
   try {
     const newOrder = await Repository.createOrder(order);
     const createdOrder = newOrder.rows[0];
+
     const waypointPromises = req.body.waypoints.map((waypoint: Waypoint) =>
       Repository.createWaypoint(createdOrder.id, waypoint)
     )

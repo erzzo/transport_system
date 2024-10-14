@@ -1,19 +1,32 @@
-# Swida transport management system
+# Swida Transport Management System
 
-Super simplified transport management system.
+A simplified transport management system.
 
-# Project description
-This simple monorepo consists of separate folders for front-end (vue) and back-end (express) with a shared models folder that are used between FE & BE.
+## Project Description
 
+This monorepo contains separate folders for the front-end (Vue.js) and back-end (Express.js) applications, along with a shared `models` folder used by both. The front-end uses Bootstrap for demonstration purposes.
 
-# Setup
-- in FE and BE folder install dependencies
-- BE uses Postre SQL, use db_dump file for DB initialization, DB connection details are for simplification hardcoded:
-	```
-	host: 'localhost',
-	database: 'swida_transport'
-	user: 'root'
-	password: 'root'
-	port: 5432
-	```
-- run both with `npm run dev`
+## Setup
+
+1. **Install Dependencies**
+   - Navigate to both the front-end (`FE`) and back-end (`BE`) folders and install the dependencies using:
+     ```
+     npm install
+     ```
+
+2. **Database Setup**
+   - The back-end uses PostgreSQL. Use the `db_dump` file to initialize the database.
+   - The database connection details are hardcoded for simplicity:
+     ```javascript
+     host: 'localhost',
+     database: 'swida_transport',
+     user: 'root',
+     password: 'root',
+     port: 5432
+     ```
+
+3. **Run the Applications**
+   - Start both the front-end and back-end applications with:
+     ```
+     npm run dev
+     ```

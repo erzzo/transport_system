@@ -74,7 +74,13 @@
       v-model="filters.date"
     ></b-form-input>
 
-    <b-button v-if="filters.customerName || filters.date" @click="clearFilters" variant="warning">Clear filters</b-button>
+    <b-button
+      v-if="filters.customerName || filters.date"
+      variant="warning"
+      @click="clearFilters"
+    >
+      Clear filters
+    </b-button>
   </div>
 
   <OrdersViewTable
